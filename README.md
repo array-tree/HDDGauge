@@ -1,7 +1,8 @@
 # HddGauge · 机械硬盘状态仪表盘
 
-一个用 **C++ / Qt 5.8（MinGW 5.3 32-bit）** 写的 Windows 桌面小工具，把一个物理硬盘的实时工作状态压缩成
+一个 Windows 桌面小工具，把一个物理硬盘的实时工作状态压缩成
 一个一眼就能看懂的仪表盘：**主指针 = 磁盘占用百分比**，**外圈 = 等效负载转速 或 读写速率（可切换）**。
+
 
 | 折叠详情（简洁模式） | 外圈：读写速率 | SSD（非旋转介质） |
 |---|---|---|
@@ -160,8 +161,9 @@ src/
 ```
 ## 7. 许可
 
-本项目源码以 [MIT](LICENSE) 授权，© 2026 array-tree。
+本项目源码以 [MIT](LICENSE) 授权，© 2026 array-tree & Deepseek-V4.1-fast。
 
 发布版捆绑的 Qt 5.8 运行库（`Qt5Core.dll` / `Qt5Gui.dll` / `Qt5Widgets.dll`、
 `platforms\qwindows.dll`、`imageformats\qico.dll` 等）版权归 The Qt Company，
 按 **LGPLv3** 授权，不在上述 MIT 范围之内。
+
