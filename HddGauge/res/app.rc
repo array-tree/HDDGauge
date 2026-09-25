@@ -1,7 +1,0 @@
-#include <windows.h>
-
-IDI_APPICON ICON "app.ico"
-
-/* Windows XP+ themed common controls + application manifest (asInvoker build:
-   for local testing without a UAC prompt). */
-1 RT_MANIFEST "app_noadmin.manifest"
