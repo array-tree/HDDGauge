@@ -46,18 +46,6 @@ SSD/NVMe 会被识别为非旋转介质，转速外圈自动退化成虚线圈�
 * 无需额外第三方库；PDH 通过 `-lpdh` 链接
 
 工具链路径**没有写死**。两个脚本都先读环境变量 `QT_DIR` / `MINGW_DIR`，
-只在未设置时才回落到作者的本地路径，并在找不到 `qmake` 时直接报错退出。
-换机器时这样即可：
-
-```bat
-set "QT_DIR=C:\Qt\5.8\mingw53_32"
-set "MINGW_DIR=C:\Qt\Tools\mingw530_32"
-build.bat
-```
-
-> 本项目开发时使用的实际路径（仅供参考）：
-> `Qt = D:\Software\Qt\QT5.8\5.8\mingw53_32`、
-> `MinGW = D:\Software\Qt\QT5.8\Tools\mingw530_32`
 
 ### 一键脚本
 
