@@ -15,7 +15,7 @@ InfoBar::InfoBar(QWidget* parent)
     grid->setHorizontalSpacing(8);
     grid->setVerticalSpacing(8);
 
-    for (int column = 0; column < 6; ++column)
+    for (int column = 0; column < 5; ++column)
         grid->setColumnStretch(column, 1);
 
     addCell(grid, 0, 0, QStringLiteral("型号"),       QStringLiteral("model"),    false);
@@ -23,14 +23,12 @@ InfoBar::InfoBar(QWidget* parent)
     addCell(grid, 0, 2, QStringLiteral("接口"),       QStringLiteral("bus"),      false);
     addCell(grid, 0, 3, QStringLiteral("介质"),       QStringLiteral("media"),    false);
     addCell(grid, 0, 4, QStringLiteral("标称转速"),   QStringLiteral("rpm"),      false);
-    addCell(grid, 0, 5, QStringLiteral("温度"),       QStringLiteral("temp"),     false);
 
     addCell(grid, 1, 0, QStringLiteral("读取"),       QStringLiteral("read"),     true);
     addCell(grid, 1, 1, QStringLiteral("写入"),       QStringLiteral("write"),    true);
     addCell(grid, 1, 2, QStringLiteral("队列深度"),   QStringLiteral("queue"),    true);
     addCell(grid, 1, 3, QStringLiteral("响应时间"),   QStringLiteral("latency"),  true);
-    addCell(grid, 1, 4, QStringLiteral("盘符"),       QStringLiteral("letters"),  false);
-    addCell(grid, 1, 5, QStringLiteral("数据源"),     QStringLiteral("source"),   false);
+    addCell(grid, 1, 4, QStringLiteral("数据源"),     QStringLiteral("source"),   false);
 }
 
 QLabel* InfoBar::addCell(QGridLayout* grid, int row, int column,
@@ -105,18 +103,6 @@ void InfoBar::setDescriptor(const DriveDescriptor& descriptor)
         rpmText = QStringLiteral("未知 (按 7200 估算)");
     }
     setText(QStringLiteral("rpm"), rpmText);
-
-    if (descriptor.temperatureC != INT_MIN)
-        setText(QStringLiteral("temp"), QStringLiteral("%1 °C").arg(descriptor.temperatureC));
-    else if (!descriptor.smartNote.isEmpty())
-        setText(QStringLiteral("temp"), descriptor.smartNote.left(24));
-    else if (!descriptor.accessNote.isEmpty())
-        setText(QStringLiteral("temp"), QStringLiteral("需管理员权限"));
-    else
-        setText(QStringLiteral("temp"), QStringLiteral("不支持"));
-
-    setText(QStringLiteral("letters"),
-            descriptor.letters.isEmpty() ? QStringLiteral("—") : descriptor.letters);
 }
 
 void InfoBar::setSamplingIntervalMs(int intervalMs)

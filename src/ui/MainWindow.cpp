@@ -245,7 +245,7 @@ void MainWindow::buildUi()
 
     m_refreshButton = new QToolButton(this);
     m_refreshButton->setText(QStringLiteral("刷新"));
-    m_refreshButton->setToolTip(QStringLiteral("重新枚举物理磁盘并读取硬件信息（型号 / 容量 / 转速 / 温度）"));
+    m_refreshButton->setToolTip(QStringLiteral("重新枚举物理磁盘并读取硬件信息（型号 / 容量 / 转速）"));
 
     m_pinButton = new QToolButton(this);
     m_pinButton->setText(QStringLiteral("置顶"));
@@ -656,7 +656,7 @@ void MainWindow::onDevicesReady(const QVector<DriveDescriptor>& devices)
         index = 0;
         // Prefer a rotating drive so the gauge shows something meaningful.
         for (int i = 0; i < devices.size(); ++i) {
-            if (devices.at(i).isRotating() && !devices.at(i).accessNote.contains(QStringLiteral("管理员"))) {
+            if (devices.at(i).isRotating()) {
                 index = i;
                 break;
             }

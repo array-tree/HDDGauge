@@ -56,15 +56,19 @@ RESOURCES += res/app.qrc
 # resolves through GetProcAddress at runtime instead.
 LIBS += -lpdh
 
-# --- admin manifest ----------------------------------------------------------
-# The shipped build embeds requireAdministrator so ATA IDENTIFY (nominal RPM)
-# and S.M.A.R.T. (temperature) can be read from the physical drive.
-# For unprivileged testing:  qmake CONFIG+=no_admin_manifest
-no_admin_manifest {
-    RC_FILE = res/app.rc
-} else {
+# --- application manifest ----------------------------------------------------
+# The shipped build runs with the rights of the invoking user, so it embeds the
+# asInvoker manifest and never raises a UAC prompt. ATA IDENTIFY and S.M.A.R.T.
+# are therefore unavailable and the nominal RPM is inferred from the model
+# string, which the UI labels as such.
+#
+# The elevated variant is still here for anyone who wants hardware-level reads
+# back:   qmake CONFIG+=admin_manifest
+admin_manifest {
     RC_FILE = res/app_admin.rc
     DEFINES += HDDGAUGE_ADMIN_MANIFEST
+} else {
+    RC_FILE = res/app.rc
 }
 
 # --- build layout ------------------------------------------------------------

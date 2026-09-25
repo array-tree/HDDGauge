@@ -114,30 +114,12 @@ void DriveEnumerator::probeDevice(DriveDescriptor* descriptor)
         descriptor->rpmSource = QStringLiteral("NVMe 总线");
     }
 
-    // ---- privileged pass: ATA IDENTIFY (nominal RPM) + S.M.A.R.T. ----------
-    const SmartResult smart = SmartProbe::query(descriptor->deviceNumber);
-    if (smart.needsElevation) {
-        descriptor->accessNote = QStringLiteral("以管理员身份运行可读取标称转速与温度");
-    } else if (!smart.ok && !smart.error.isEmpty()) {
-        descriptor->smartNote = smart.error;
-    }
-
-    if (smart.rpmKnown) {
-        descriptor->rpmSource = QStringLiteral("ATA IDENTIFY");
-        descriptor->mediaKnown = true;
-        if (smart.nonRotating) {
-            descriptor->solidState = true;
-            descriptor->nominalRpm = 0;
-        } else {
-            descriptor->solidState = false;
-            descriptor->nominalRpm = smart.nominalRpm;
-        }
-    }
-    if (smart.temperatureKnown)
-        descriptor->temperatureC = smart.temperatureC;
-    descriptor->smartOk = smart.ok;
-
-    // ---- last-resort heuristics -------------------------------------------
+    // ---- media type and nominal RPM ---------------------------------------
+    // There is no privileged pass any more: the shipped build runs with the
+    // rights of the invoking user, so ATA IDENTIFY — the only authoritative
+    // source of a spindle's nominal rate — is out of reach, and so is S.M.A.R.T.
+    // What follows is a model-string guess, and `rpmSource` says exactly that on
+    // screen instead of dressing it up as a hardware reading.
     if (!descriptor->mediaKnown) {
         const int hint = SmartProbe::solidStateHint(descriptor->vendor, descriptor->model);
         if (hint == 1) {
@@ -186,7 +168,6 @@ QVector<DriveDescriptor> DriveEnumerator::enumerate(const QVector<int>& candidat
     const QHash<int, QString> letters = volumeLetters();
 
     QVector<DriveDescriptor> result;
-    int elevatedFailures = 0;
 
     for (int device : sorted) {
         DriveDescriptor descriptor;
@@ -201,17 +182,12 @@ QVector<DriveDescriptor> DriveEnumerator::enumerate(const QVector<int>& candidat
         if (!descriptor.queried && descriptor.letters.isEmpty() && descriptor.accessNote.isEmpty())
             continue;
 
-        if (descriptor.accessNote.contains(QStringLiteral("管理员")))
-            ++elevatedFailures;
-
         result.append(descriptor);
     }
 
     if (note) {
         if (result.isEmpty())
             *note = QStringLiteral("未发现任何物理磁盘");
-        else if (elevatedFailures > 0)
-            *note = QStringLiteral("有 %1 个磁盘的转速/温度需要管理员权限才能读取").arg(elevatedFailures);
         else
             note->clear();
     }

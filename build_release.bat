@@ -1,6 +1,6 @@
 @echo off
 rem ---------------------------------------------------------------------------
-rem HddGauge - shipped build (requireAdministrator) + windeployqt -> dist\
+rem HddGauge - shipped build (asInvoker - no UAC prompt) + windeployqt -> dist\
 rem
 rem Toolchain location: set QT_DIR / MINGW_DIR in your environment to point at
 rem your own Qt 5.8 mingw53_32 kit, e.g.
@@ -53,5 +53,5 @@ del /q dist\Qt5Svg.dll 2>nul
 
 echo.
 echo [ok] deployable build in %~dp0dist
-echo      HddGauge.exe will request administrator rights on launch.
+echo      HddGauge.exe runs as the invoking user; no UAC prompt.
 endlocal

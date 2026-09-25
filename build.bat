@@ -3,6 +3,9 @@ rem ---------------------------------------------------------------------------
 rem HddGauge - development build (asInvoker, no UAC prompt)
 rem   output: build\release\HddGauge.exe
 rem
+rem This is the same manifest the shipped build uses now, so dev and release
+rem differ only in whether windeployqt has run.
+rem
 rem Toolchain location: set QT_DIR / MINGW_DIR in your environment to point at
 rem your own Qt 5.8 mingw53_32 kit, e.g.
 rem     setx QT_DIR    "C:\Qt\5.8\mingw53_32"
@@ -29,7 +32,7 @@ cd /d "%~dp0"
 if not exist build mkdir build
 cd build
 
-qmake ..\HddGauge.pro CONFIG+=no_admin_manifest
+qmake ..\HddGauge.pro
 if errorlevel 1 exit /b 1
 
 mingw32-make -j4

@@ -1,37 +1,20 @@
 #pragma once
 
 #include <QString>
-#include <climits>
 
-/// Everything S.M.A.R.T. / ATA IDENTIFY could tell us about one drive.
-struct SmartResult
-{
-    bool    attempted = false;
-    bool    ok = false;
-    bool    needsElevation = false;
-    bool    nonRotating = false;
-    int     nominalRpm = 0;          // 0 => not reported
-    bool    rpmKnown = false;
-    int     temperatureC = INT_MIN;
-    bool    temperatureKnown = false;
-    int     powerOnHours = -1;
-    int     reallocatedSectors = -1;
-    int     pendingSectors = -1;
-    QString error;
-};
-
-/// ATA pass-through access to physical drives.
+/// Model-string heuristics that stand in for what ATA IDENTIFY used to answer.
 ///
-/// ATA IDENTIFY DEVICE word 217 is the only authoritative source of the
-/// spindle's *nominal* rotation rate; S.M.A.R.T. attribute 194 gives the
-/// temperature. Both require an elevated process.
+/// HddGauge deliberately runs with the rights of the invoking user, so ATA
+/// pass-through — the only authoritative source of a spindle's nominal rotation
+/// rate, and of S.M.A.R.T. attribute 194 for temperature — is out of reach. The
+/// build no longer embeds a requireAdministrator manifest and no longer asks for
+/// elevation, so everything here is a best-effort guess. The UI labels it that
+/// way ("型号推断（非硬件读数）") rather than passing it off as a measurement.
 class SmartProbe
 {
 public:
-    static SmartResult query(int deviceNumber);
-
-    /// Best-effort nominal RPM when ATA IDENTIFY is unavailable (USB bridges,
-    /// virtual disks, no elevation). Returns 0 when nothing can be inferred.
+    /// Best-effort nominal RPM from the model string. Returns 0 when nothing can
+    /// be inferred.
     static int rpmFromModelName(const QString& vendor, const QString& model);
 
     /// Cheap SSD/HDD guess purely from the model string.

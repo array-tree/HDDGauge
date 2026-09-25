@@ -20,18 +20,16 @@ struct DriveDescriptor
     QString  busName;
     bool     removable = false;
 
-    // media / rotation
+    // media / rotation. Both values come from the model string, never from the
+    // hardware: the app runs unelevated, so ATA IDENTIFY is not an option.
     bool     solidState = false;    // true => rotating-media gauges are meaningless
     bool     mediaKnown = false;    // false => we could not decide HDD vs SSD
     int      nominalRpm = 0;        // 0 => unknown
     QString  rpmSource;             // where nominalRpm came from
-    int      temperatureC = INT_MIN;
-    bool     smartOk = false;
-    QString  smartNote;
 
     QString  letters;               // "C:, D:"
     bool     queried = false;       // device property query succeeded
-    QString  accessNote;            // explains missing privileged fields
+    QString  accessNote;            // why a device could not be opened
 
     bool isRotating() const { return !solidState; }
 

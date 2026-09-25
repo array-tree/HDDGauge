@@ -94,14 +94,9 @@ int SelfTest::run(const QString& reportPath)
                                                      ? QString::number(descriptor.nominalRpm)
                                                      : QStringLiteral("(unknown)"));
         emitField(QStringLiteral("rpm source"), descriptor.rpmSource);
-        emitField(QStringLiteral("temperature"), descriptor.temperatureC != INT_MIN
-                                                     ? QStringLiteral("%1 C").arg(descriptor.temperatureC)
-                                                     : QStringLiteral("(unavailable)"));
         emitField(QStringLiteral("letters"), descriptor.letters);
         if (!descriptor.accessNote.isEmpty())
             emitField(QStringLiteral("access"), descriptor.accessNote);
-        if (!descriptor.smartNote.isEmpty())
-            emitField(QStringLiteral("smart"), descriptor.smartNote);
 
         // derived equivalent speed at a couple of representative loads
         DiskSample demo;
@@ -135,24 +130,6 @@ int SelfTest::run(const QString& reportPath)
                  .arg(wu::formatRate(sample.readBps))
                  .arg(wu::formatRate(sample.writeBps)));
     }
-    emitLine(QString());
-
-    // ------------------------------------------------------------------
-    emitLine(QStringLiteral("[4] S.M.A.R.T. / ATA IDENTIFY"));
-    // Only the drives that actually exist (section 2), not the whole 0..7 sweep.
-    for (const DriveDescriptor& descriptor : devices) {
-        const SmartResult result = SmartProbe::query(descriptor.deviceNumber);
-        if (!result.attempted)
-            continue;
-        emitLine(QStringLiteral("  PhysicalDrive%1: ok=%2 rpm=%3 nonRotating=%4 temp=%5 %6")
-                 .arg(descriptor.deviceNumber)
-                 .arg(result.ok ? QStringLiteral("yes") : QStringLiteral("no"))
-                 .arg(result.rpmKnown ? QString::number(result.nominalRpm) : QStringLiteral("?"))
-                 .arg(result.nonRotating ? QStringLiteral("yes") : QStringLiteral("no"))
-                 .arg(result.temperatureKnown ? QString::number(result.temperatureC) : QStringLiteral("?"))
-                 .arg(result.error));
-    }
-
     emitLine(QString());
     emitLine(QStringLiteral("=== end ==="));
 
