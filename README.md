@@ -52,8 +52,7 @@ SSD/NVMe 会被识别为非旋转介质，转速外圈自动退化成虚线圈�
 ### 一键脚本
 
 ```bat
-build.bat          :: 开发版（asInvoker，不弹 UAC），输出 build\release\HddGauge.exe
-build_release.bat  :: 发布版（requireAdministrator）+ windeployqt 部署到 dist\
+build.bat
 ```
 
 ### 手动构建
@@ -61,11 +60,9 @@ build_release.bat  :: 发布版（requireAdministrator）+ windeployqt 部署到
 ```bat
 set "PATH=%QT_DIR%\bin;%MINGW_DIR%\bin;%PATH%"
 mkdir build && cd build
-qmake ..\HddGauge.pro CONFIG+=no_admin_manifest
+qmake ..\HddGauge.pro
 mingw32-make -j4
 ```
-
-去掉 `CONFIG+=no_admin_manifest` 即得到内嵌 `requireAdministrator` 的正式版。
 
 > ⚠️ **不要把工程放在含中文的路径下再用 `$$OUT_PWD`。**
 > 本项目实测：一旦把绝对路径（含 CJK 字符）写进 Makefile，moc 会因为
