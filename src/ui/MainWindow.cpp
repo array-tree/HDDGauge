@@ -41,6 +41,26 @@ const int kDefaultIntervalMs = 250;
 /// enough that a double toggle never feels laggy.
 const int kDetailSlideMs = 180;
 
+/// Strip everything a drive descriptor carries that points back at this
+/// machine.
+///
+/// Applied to the list the instant it arrives from the worker, so no widget
+/// downstream — the drive picker, the parameter grid, the tray tooltip, the
+/// status line — can leak a real model name, serial or drive letter into a
+/// documentation capture. Capacity, bus, media type and RPM are deliberately
+/// left alone: they describe the class of drive, not the machine it is in.
+void anonymizeDevices(QVector<DriveDescriptor>& devices)
+{
+    for (int i = 0; i < devices.size(); ++i) {
+        DriveDescriptor& descriptor = devices[i];
+        descriptor.model = QStringLiteral("示例磁盘 %1").arg(i + 1);
+        descriptor.vendor.clear();
+        descriptor.serial.clear();
+        descriptor.revision.clear();
+        descriptor.letters = QStringLiteral("%1:").arg(QChar('X' + i));
+    }
+}
+
 QString intervalText(int ms)
 {
     if (ms < 1000)
@@ -127,6 +147,11 @@ void MainWindow::setDetailVisibleForTesting(bool sparkline, bool infoBar)
     // `--screenshot` grabs the window; an animated toggle could be captured
     // halfway, so the off-screen path always snaps.
     setDetailShown(sparkline, infoBar, true, false);
+}
+
+void MainWindow::setAnonymizeForTesting(bool on)
+{
+    m_anonymize = on;
 }
 
 void MainWindow::setIntervalForTesting(int intervalMs)
@@ -460,11 +485,27 @@ void MainWindow::finishDetailAt(bool shown)
     resize(width(), shown ? m_detailBase + m_detailDelta : m_detailBase);
     relayout();
 
+    // Hand back the width the expanded layout forced on the window. This is the
+    // only moment it can be done: while the panel is on screen its minimum width
+    // is what holds the window open, so the window cannot be narrowed until the
+    // panel is gone. Subtracting the measured overshoot (rather than restoring a
+    // remembered absolute width) keeps any resize the user did *while* expanded.
+    if (!shown && m_expandAddedWidth > 0) {
+        resize(qMax(1, width() - m_expandAddedWidth), height());
+        relayout();
+        m_expandAddedWidth = 0;
+    }
+
     if (m_dialTarget > 0) {
         const int drift = m_dashboard->height() - m_dialTarget;
         if (drift != 0)
             resize(width(), height() - drift);
     }
+
+    // Measure what the expanded layout cost in width, after the layout has run —
+    // this is what the next collapse gives back.
+    if (shown)
+        m_expandAddedWidth = qMax(0, width() - m_expandBaseWidth);
 }
 
 /// Land a transition that is still running, so the geometry measured by the next
@@ -497,6 +538,8 @@ void MainWindow::setDetailShown(bool sparkline, bool infoBar, bool adjustWindow,
 
     const int dialBefore = m_dashboard->height();
     const int panelBefore = m_detailPanel->isVisible() ? m_detailPanel->height() : 0;
+    const bool wasShown = m_detailShown;
+    const int widthBefore = width();
 
     m_showSparkline = sparkline;
     m_showInfoBar = infoBar;
@@ -507,6 +550,13 @@ void MainWindow::setDetailShown(bool sparkline, bool infoBar, bool adjustWindow,
     const bool nowShown = m_showSparkline || m_showInfoBar;
     m_detailPanel->setVisible(nowShown);
     m_detailShown = nowShown;
+
+    // A fresh hidden -> shown transition starts a new width measurement. Taken
+    // before the panel is laid out, so it is the width the user was looking at.
+    if (!wasShown && nowShown) {
+        m_expandBaseWidth = widthBefore;
+        m_expandAddedWidth = 0;
+    }
 
     syncDetailControls();
 
@@ -591,10 +641,14 @@ void MainWindow::onDevicesReady(const QVector<DriveDescriptor>& devices)
                              : m_preferredDevice;
 
     m_devices = devices;
+    if (m_anonymize)
+        anonymizeDevices(m_devices);
 
     m_deviceCombo->blockSignals(true);
     m_deviceCombo->clear();
-    for (const DriveDescriptor& descriptor : devices)
+    // Feed the picker from `m_devices`, never from the raw `devices` argument:
+    // under --anonymize the raw list still holds the real model names.
+    for (const DriveDescriptor& descriptor : m_devices)
         m_deviceCombo->addItem(descriptor.displayName(), descriptor.deviceNumber);
 
     int index = indexOfDevice(previous);

@@ -9,13 +9,15 @@
 //
 // This is the only probe that needs Qt, so it is built differently from 01-05:
 //
-//   set PATH=D:\Software\Qt\QT5.8\5.8\mingw53_32\bin;D:\Software\Qt\QT5.8\Tools\mingw530_32\bin;%PATH%
+//   set "QT_DIR=C:\Qt\5.8\mingw53_32"
+//   set "MINGW_DIR=C:\Qt\Tools\mingw530_32"
+//   set "PATH=%QT_DIR%\bin;%MINGW_DIR%\bin;%PATH%"
 //   g++ -std=gnu++11 -o p6.exe 06_about_to_quit.cpp ^
-//       -ID:/Software/Qt/QT5.8/5.8/mingw53_32/include ^
-//       -ID:/Software/Qt/QT5.8/5.8/mingw53_32/include/QtCore ^
-//       -ID:/Software/Qt/QT5.8/5.8/mingw53_32/include/QtGui ^
-//       -ID:/Software/Qt/QT5.8/5.8/mingw53_32/include/QtWidgets ^
-//       -LD:/Software/Qt/QT5.8/5.8/mingw53_32/lib -lQt5Core -lQt5Gui -lQt5Widgets
+//       -I%QT_DIR%/include ^
+//       -I%QT_DIR%/include/QtCore ^
+//       -I%QT_DIR%/include/QtGui ^
+//       -I%QT_DIR%/include/QtWidgets ^
+//       -L%QT_DIR%/lib -lQt5Core -lQt5Gui -lQt5Widgets
 //   p6.exe
 //
 // The registry key is cleaned up on exit.

@@ -4,6 +4,7 @@
 
 #include <QWidget>
 
+class CornerReadout;
 class RingGauge;
 class UsageGauge;
 
@@ -38,8 +39,19 @@ protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
+    void refreshReadouts();
+    void layoutReadouts();
+
     RingGauge*      m_ring = nullptr;
     UsageGauge*     m_usage = nullptr;
+
+    /// Always-on readouts in the dial's two empty corners: transfer rates on the
+    /// left, response time on the right. They repeat the first row of the
+    /// detail grid so the two numbers that move fastest stay visible while the
+    /// panel is collapsed.
+    CornerReadout*  m_cornerLeft = nullptr;
+    CornerReadout*  m_cornerRight = nullptr;
+
     DriveDescriptor m_descriptor;
     DiskSample      m_sample;
     bool            m_hasSample = false;

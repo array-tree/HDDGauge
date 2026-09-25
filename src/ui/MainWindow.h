@@ -48,6 +48,11 @@ public:
     /// `--screenshot --interval <ms>`: render at a given sampling rate.
     void setIntervalForTesting(int intervalMs);
 
+    /// `--screenshot --anonymize`: replace the model name, serial and drive
+    /// letters of every enumerated drive with neutral placeholders, so a
+    /// documentation capture never carries the author's hardware with it.
+    void setAnonymizeForTesting(bool on);
+
 signals:
     void requestActiveDevice(int deviceNumber);
     void requestTicking(int intervalMs);
@@ -121,6 +126,7 @@ private:
     bool                     m_detailShown = true;
     int                      m_preferredDevice = -1;
     bool                     m_trayNoticeShown = false;
+    bool                     m_anonymize = false;
 
     // Detail panel transition. `m_detailBase` is the window height with the
     // panel fully collapsed, `m_detailDelta` the height it adds when expanded
@@ -136,4 +142,15 @@ private:
     /// Dial height to restore when a transition lands; -1 before the first
     /// measured toggle.
     int                      m_dialTarget = -1;
+
+    // Width reconciliation for the same toggle. Showing the panel raises the
+    // layout's minimum width (the parameter grid cannot fold below ~655 px), and
+    // Qt then widens the window to match — permanently, because nothing lowers
+    // it again when the panel goes away. `m_expandBaseWidth` is the width the
+    // window had before the panel appeared and `m_expandAddedWidth` how much the
+    // expanded layout forced on top of it; collapsing hands exactly that back,
+    // so a width the user chose while collapsed survives a round trip through
+    // the expanded state.
+    int                      m_expandBaseWidth = 0;
+    int                      m_expandAddedWidth = 0;
 };

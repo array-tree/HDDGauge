@@ -88,6 +88,11 @@ int main(int argc, char** argv)
             window.setIntervalForTesting(interval);
         if (args.contains(QStringLiteral("--compact")))
             window.setDetailVisibleForTesting(false, false);
+        // Documentation captures must never carry this machine's hardware with
+        // them, so the anonymised model/serial/drive letters are applied before
+        // the first frame is painted.
+        if (args.contains(QStringLiteral("--anonymize")))
+            window.setAnonymizeForTesting(true);
 
         QTimer::singleShot(delay, [&window, path]() {
             const QPixmap pixmap = window.grab();

@@ -4,13 +4,15 @@ rem HddGauge - development build (asInvoker, no UAC prompt)
 rem   output: build\release\HddGauge.exe
 rem
 rem Toolchain location: set QT_DIR / MINGW_DIR in your environment to point at
-rem your own Qt 5.8 mingw53_32 kit.  The defaults below are the author's local
-rem paths; they will not exist on your machine.
+rem your own Qt 5.8 mingw53_32 kit, e.g.
+rem     setx QT_DIR    "C:\Qt\5.8\mingw53_32"
+rem     setx MINGW_DIR "C:\Qt\Tools\mingw530_32"
+rem The fallbacks below are the stock Qt installer layout.
 rem ---------------------------------------------------------------------------
 setlocal
 
-if not defined QT_DIR    set "QT_DIR=D:\Software\Qt\QT5.8\5.8\mingw53_32"
-if not defined MINGW_DIR set "MINGW_DIR=D:\Software\Qt\QT5.8\Tools\mingw530_32"
+if not defined QT_DIR    set "QT_DIR=C:\Qt\5.8\mingw53_32"
+if not defined MINGW_DIR set "MINGW_DIR=C:\Qt\Tools\mingw530_32"
 
 set "PATH=%QT_DIR%\bin;%MINGW_DIR%\bin;%PATH%"
 

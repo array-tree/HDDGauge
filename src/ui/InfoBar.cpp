@@ -50,10 +50,10 @@ QLabel* InfoBar::addCell(QGridLayout* grid, int row, int column,
     valueLabel->setObjectName(monospace ? QStringLiteral("ValueMono") : QStringLiteral("Value"));
     valueLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
     // Columns size to their content (the default policy), but a pathologically
-    // long model string ("WDC PC SN520 SDAPMUW-128G-1001") must not be able to
-    // widen the whole window: cap each value and rely on the tool tip for the
-    // rest. Ignoring the size hint entirely was tried first and squeezed every
-    // column down to the caption width, clipping even "TOSHIBA MQ04ABF100".
+    // long model string must not be able to widen the whole window: cap each
+    // value and rely on the tool tip for the rest. Ignoring the size hint
+    // entirely was tried first and squeezed every column down to the caption
+    // width, clipping even a short model name.
     valueLabel->setMaximumWidth(230);
 
     layout->addWidget(captionLabel);

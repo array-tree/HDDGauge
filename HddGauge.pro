@@ -26,6 +26,7 @@ SOURCES += \
     src/ui/DashboardPage.cpp \
     src/ui/Sparkline.cpp \
     src/ui/InfoBar.cpp \
+    src/ui/CornerReadout.cpp \
     src/ui/MainWindow.cpp
 
 HEADERS += \
@@ -45,6 +46,7 @@ HEADERS += \
     src/ui/DashboardPage.h \
     src/ui/Sparkline.h \
     src/ui/InfoBar.h \
+    src/ui/CornerReadout.h \
     src/ui/MainWindow.h
 
 RESOURCES += res/app.qrc
