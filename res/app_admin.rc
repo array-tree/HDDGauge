@@ -1,0 +1,7 @@
+#include <windows.h>
+
+IDI_APPICON ICON "app.ico"
+
+/* Shipped build: requires elevation so that ATA IDENTIFY (nominal RPM) and
+   S.M.A.R.T. (temperature / health) can be read from the physical drive. */
+1 RT_MANIFEST "app.manifest"
