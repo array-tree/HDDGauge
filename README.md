@@ -4,10 +4,6 @@
 一个一眼就能看懂的仪表盘：**主指针 = 磁盘占用百分比**，**外圈 = 等效负载转速 或 读写速率（可切换）**。
 
 
-| 折叠详情（简洁模式） | 外圈：读写速率 | SSD（非旋转介质） |
-|---|---|---|
-| ![折叠](docs/screenshot-compact.png) | ![HDD · 读写速率](docs/screenshot-hdd-rate.png) | ![SSD](docs/screenshot-ssd.png) |
-
 ---
 
 ## 1. 显示数据
